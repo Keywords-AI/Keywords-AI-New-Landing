@@ -29,7 +29,7 @@ export default function AGDetailContent({
     const types = type?.split(',').map(t => t.trim());
 
     return (
-        <div className="flex flex-col pt-[140px] pb-[120px] px-sm items-center self-stretch gap-xl">
+        <div className="flex flex-col pt-[140px] pb-[120px] px-sm  items-center self-stretch gap-xl">
             <div className="flex flex-col max-w-[1200px] items-start self-stretch gap-md">
                 <div className="flex flex-col items-start gap-xxs self-stretch">
                     <h1 className="self-stretch text-gray-white display-lg">
