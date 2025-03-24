@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/app/components/Buttons";
 import {
   Right,
@@ -14,6 +15,7 @@ import {
   TagSettings,
   TagLab,
   TagTraces,
+  TagEvals,
 } from "@/app/components/Icons";
 import { Tag } from "@/app/components/Tag/Tag";
 import Accordion from "@/app/components/Sections/Accordion";
@@ -38,6 +40,8 @@ export function TagIconHelper(flag: string) {
       return <TagLogo />;
     case "Datasets":
       return <TagDatasets />;
+      case "Testsets":
+        return <TagDatasets />;
     case "Prompts":
       return <TagPrompts />;
     case "Traces":
@@ -46,6 +50,10 @@ export function TagIconHelper(flag: string) {
       return <TagSettings />;
     case "Lab":
       return <TagLab />;
+      case "Experiments":
+        return <TagLab />;
+    case "Evals":
+      return <TagEvals />;
     default:
       return <TagRocket />;
   }
@@ -79,17 +87,6 @@ export function LogSection({ sectionContent, sectionName }: LogSectionProps) {
           trigger: sectionName,
           content: (
             <div className="flex flex-col items-start gap-xxs">
-              {/* {sectionContent.map((item) => (
-                <div className="flex pl-sm items-start gap-xxxs self-stretch">
-                  <p className="inline-block text-gray-white">·</p>
-                  <p className="text-gray-white text-md-regular">
-                    <div className="inline-block mr-xxxs">
-                      <Tag icon={TagIconHelper(item.tag)} text={item.tag} />
-                    </div>
-                    {item.description}
-                  </p>
-                </div>
-              ))} */}
               {sectionContent.map((item, index) => (
                 <div
                   key={item.id || index}
@@ -100,7 +97,28 @@ export function LogSection({ sectionContent, sectionName }: LogSectionProps) {
                     <span className="inline-block mr-xxxs">
                       <Tag icon={TagIconHelper(item.tag)} text={item.tag} />
                     </span>
-                    {item.description}
+                    <span className="inline">
+                      <ReactMarkdown
+                        components={{
+                          a: ({ href, children }) => (
+                          <a
+                            href={href}
+                            className="text-primary hover:text-primary-2 hover:cursor-pointer"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {children}
+                          </a>
+                        ),
+                          p: ({ children }) => (
+                            <span className="inline">{children}</span>
+                          ),
+                        }}
+                        remarkPlugins={[gfm]}
+                      >
+                        {item.description}
+                      </ReactMarkdown>
+                    </span>
                   </div>
                 </div>
               ))}
@@ -114,18 +132,47 @@ export function LogSection({ sectionContent, sectionName }: LogSectionProps) {
 }
 
 export function LogContent({ log }: { log: Log }) {
-  const isExternalLink = log.snapshot?.startsWith('http://') || log.snapshot?.startsWith('https://');
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Effect to detect screen size and update state
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    // Check on initial render
+    checkIfMobile();
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkIfMobile);
+    
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener('resize', checkIfMobile);
+    };
+  }, []);
+
+  const isExternalLink =
+    log.snapshot?.startsWith("http://") || log.snapshot?.startsWith("https://");
+    
   return (
-    <div aria-label="changelog history" className="flex w-[1200px] items-start">
-      <div className="flex w-[300px] h-[28px] py-xxs px-0 flex-col justify-center items-start gap-[8px] flex-shrink-0">
+    <div 
+      aria-label="changelog history" 
+      className={`flex ${isMobile ? 'flex-col w-full' : 'flex-row w-[1200px]'} items-start`}
+    >
+      <div className={`flex ${isMobile ? 'w-full mb-4' : 'w-[300px]'} h-[28px] py-xxs px-0 flex-col justify-center items-start gap-[8px] flex-shrink-0`}>
         <p className="caption text-gray-4">{log.date}</p>
       </div>
-      <div className="flex w-[600px] flex-col items-start gap-md flex-shrink-0">
+      <div className={`flex ${isMobile ? 'w-full' : 'w-[600px]'} flex-col items-start gap-md flex-shrink-0`}>
         <p className="text-gray-white display-xs-md">{log.Title}</p>
         {log.snapshot && (
           <div className="relative w-full aspect-w-16 aspect-h-9">
             <Image
-              src={isExternalLink ? log.snapshot : `/images/changelog/snapshots/${log.snapshot}`}
+              src={
+                isExternalLink
+                  ? log.snapshot
+                  : `/images/changelog/snapshots/${log.snapshot}`
+              }
               alt={`Snapshot for version ${log.version}`}
               width={1200}
               height={675}
@@ -146,7 +193,7 @@ export function LogContent({ log }: { log: Log }) {
         <div className="text-gray-white text-md-regular">
           {log.introduction.split("\n").map((line, index) => (
             <React.Fragment key={index}>
-               <ReactMarkdown
+              <ReactMarkdown
                 components={{
                   li: ({ node, ...props }) => {
                     return (
@@ -169,7 +216,10 @@ export function LogContent({ log }: { log: Log }) {
                     const textStyle = { color: "text-gray-white" };
 
                     return (
-                      <p className={`text-md-regular ${textStyle}`} style={{ marginBottom: "24px" }}>
+                      <p
+                        className={`text-md-regular ${textStyle}`}
+                        style={{ marginBottom: "24px" }}
+                      >
                         {props.children}
                       </p>
                     );
@@ -177,7 +227,7 @@ export function LogContent({ log }: { log: Log }) {
                   a: ({ href, children }) => (
                     <a
                       href={href}
-                      className="text-gray-white underline"
+                      className="text-[#6483F0] hover:text-[#7590F2] cursor-pointer"
                       target="_blank"
                       rel="noopener noreferrer"
                     >
@@ -188,10 +238,8 @@ export function LogContent({ log }: { log: Log }) {
                 remarkPlugins={[gfm]}
               >
                 {line}
-              {/* {index !== log.introduction.split("\n").length - 1 && <br />} */}
+                {/* {index !== log.introduction.split("\n").length - 1 && <br />} */}
               </ReactMarkdown>
-  
-
             </React.Fragment>
           ))}
         </div>
