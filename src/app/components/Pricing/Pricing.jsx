@@ -393,7 +393,7 @@ export function Pricing() {
         className="flex-col px-[120px] sm:p-lg items-center gap-xl self-stretch  bg-black_gradient  flex-nowrap"
       >
         <div className="flex-col items-center gap-sm self-stretch text-center caption-cap gradient-text">
-          POWERING THE WORLD’S BEST AI STARTUPS
+          POWERING THE WORLD'S BEST AI STARTUPS
         </div>
         <div className="flex flex-wrap flex-row w-[935px] max-w-[1200px] justify-center items-start content-start gap-[20px]">
           <div
@@ -460,7 +460,7 @@ export function Pricing() {
         className="flex-col py-xxxl px-sm sm:p-lg items-center gap-xl self-stretch  bg-black_gradient  flex-nowrap"
       >
         <div className="flex-col items-center gap-sm self-stretch text-center caption-cap gradient-text">
-          POWERING THE WORLD’S BEST AI STARTUPS
+          POWERING THE WORLD'S BEST AI STARTUPS
         </div>
 
         <div className="flex flex-wrap flex-row w-[1174px] max-w-[1200px] justify-center items-start content-start gap-[20px]">
@@ -558,26 +558,28 @@ export function Pricing() {
       {/* pricing table */}
       <div className="flex flex-col px-xl pt-xxxl pb-[240px] gap-xl items-center self-stretch w-full">
         <div className="flex-col gap-0 max-w-[1200px] w-full">
-          <div className="flex flex-row w-full gap-sm items-start self-stretch sticky -top-lg bg-gray-1">
-            <div className="flex flex-row min-w-[240px] flex-1 items-start self-stretch" />
-            {pricingCards.map((card) => (
-              <SmallPricingCard
-                key={card.plan}
-                plan={card.plan}
-                displayPlan={card.displayPlan}
-                monthlyPrice={card.monthlyPrice}
-                yearlyPrice={card.yearlyPrice}
-                yearlyDiscount={card.yearlyDiscount}
-                isYearly={isYearly}
-                currentPlan={card.plan}
-                handleSwitchChange={handleSwitchChange}
-                onClick={card.onClick}
-              />
-            ))}
+          <div className="overflow-x-auto min-w-0">
+            <div className="flex flex-row w-max gap-sm items-start self-stretch sticky -top-lg bg-gray-1">
+              <div className="flex flex-row min-w-[240px] items-start self-stretch" />
+              {pricingCards.map((card) => (
+                <SmallPricingCard
+                  key={card.plan}
+                  plan={card.plan}
+                  displayPlan={card.displayPlan}
+                  monthlyPrice={card.monthlyPrice}
+                  yearlyPrice={card.yearlyPrice}
+                  yearlyDiscount={card.yearlyDiscount}
+                  isYearly={isYearly}
+                  currentPlan={card.plan}
+                  handleSwitchChange={handleSwitchChange}
+                  onClick={card.onClick}
+                />
+              ))}
+            </div>
+            <div className="w-max">
+              <PricingTable />
+            </div>
           </div>
-          <PricingTable />
-          {/* 
-          <PricingTable /> */}
         </div>
       </div>
     </Page>
